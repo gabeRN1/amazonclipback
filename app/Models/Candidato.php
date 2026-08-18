@@ -7,6 +7,8 @@ class Candidato {
     public function __construct() {
         $db = new Database();
         $this->conn = $db->getConnection();
+        // Ativa o modo de exceção do PDO para lançar erros ao invés de falhar em silêncio
+        $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
     public function cadastrar($dados) {
@@ -15,16 +17,25 @@ class Candidato {
                   VALUES 
                   (:nome, :localizacao, :email, :whatsapp, :area_atuacao, :portfolio, :resumo)";
         
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':nome', $dados['nome']);
-        $stmt->bindParam(':localizacao', $dados['localizacao']);
-        $stmt->bindParam(':email', $dados['email']);
-        $stmt->bindParam(':whatsapp', $dados['whatsapp']);
-        $stmt->bindParam(':area_atuacao', $dados['area_atuacao']);
-        $stmt->bindParam(':portfolio', $dados['portfolio']);
-        $stmt->bindParam(':resumo', $dados['resumo']);
-        
-        return $stmt->execute();
+        try {
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindValue(':nome', $dados['nome'] ?? '');
+            $stmt->bindValue(':localizacao', $dados['localizacao'] ?? '');
+            $stmt->bindValue(':email', $dados['email'] ?? '');
+            $stmt->bindValue(':whatsapp', $dados['whatsapp'] ?? '');
+            $stmt->bindValue(':area_atuacao', $dados['area_atuacao'] ?? '');
+            $stmt->bindValue(':portfolio', $dados['portfolio'] ?? '');
+            $stmt->bindValue(':resumo', $dados['resumo'] ?? '');
+            
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            // Salva o erro exato do banco no arquivo debug.log
+            $log = "[" . date('Y-m-d H:i:s') . "] ERRO CANDIDATO: " . $e->getMessage() . PHP_EOL;
+            $log .= "DADOS RECEBIDOS: " . print_r($dados, true) . PHP_EOL . "---" . PHP_EOL;
+            file_put_contents(__DIR__ . '/debug.log', $log, FILE_APPEND);
+            return false;
+        }
     }
 
     public function contarTotal($area_atuacao = '', $localizacao = '') {
@@ -37,8 +48,8 @@ class Candidato {
         $query = "SELECT COUNT(id) as total FROM candidatos_trabalhe_conosco $where";
         $stmt = $this->conn->prepare($query);
 
-        if (!empty($area_atuacao)) { $stmt->bindParam(':area_atuacao', $area_atuacao); }
-        if (!empty($localizacao)) { $stmt->bindParam(':localizacao', $localizacao); }
+        if (!empty($area_atuacao)) { $stmt->bindValue(':area_atuacao', $area_atuacao); }
+        if (!empty($localizacao)) { $stmt->bindValue(':localizacao', $localizacao); }
 
         $stmt->execute();
         $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -60,11 +71,11 @@ class Candidato {
 
         $stmt = $this->conn->prepare($query);
 
-        if (!empty($area_atuacao)) { $stmt->bindParam(':area_atuacao', $area_atuacao); }
-        if (!empty($localizacao)) { $stmt->bindParam(':localizacao', $localizacao); }
+        if (!empty($area_atuacao)) { $stmt->bindValue(':area_atuacao', $area_atuacao); }
+        if (!empty($localizacao)) { $stmt->bindValue(':localizacao', $localizacao); }
         
-        $stmt->bindParam(':limite', $limite, PDO::PARAM_INT);
-        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue(':limite', $limite, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

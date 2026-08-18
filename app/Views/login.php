@@ -1,3 +1,10 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$erro = $_SESSION['erro_login'] ?? null;
+unset($_SESSION['erro_login']);
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,7 +13,7 @@
     <title>Login - Plataforma de Profissionais</title>
     <!-- Prevenção do erro 404 do Favicon -->
     <link rel="icon" href="data:,">
-    <!-- Tailwind CSS (via CDN para facilitar na tela de login) -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-100 h-screen flex items-center justify-center">
@@ -18,18 +25,18 @@
             <p class="text-sm text-slate-500 mt-1">Insira suas credenciais para continuar</p>
         </div>
         
-        <!-- Exibe o erro se o usuário errar a senha -->
+        <!-- Exibe a mensagem de erro vinda do LoginController se o login falhar -->
         <?php if (!empty($erro)): ?>
             <div class="bg-rose-50 border-l-4 border-rose-500 text-rose-700 p-4 mb-6 rounded-r">
                 <p class="text-sm font-medium"><?= $erro; ?></p>
             </div>
         <?php endif; ?>
 
-        <!-- Formulário enviando para o método autenticar -->
-        <form action="/login/autenticar" method="POST">
+        <!-- Formulário enviando para a rota usando a BASE_URL -->
+        <form action="<?= BASE_URL ?>/login/autenticar" method="POST">
             <div class="mb-5">
-                <label class="block text-slate-700 text-sm font-bold mb-2">Usuário</label>
-                <input type="text" name="usuario" class="w-full border border-slate-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required autocomplete="off">
+                <label class="block text-slate-700 text-sm font-bold mb-2">E-mail</label>
+                <input type="email" name="email" class="w-full border border-slate-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required autocomplete="off" placeholder="seuemail@dominio.com">
             </div>
             
             <div class="mb-8">

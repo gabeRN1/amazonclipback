@@ -33,7 +33,7 @@ class Database {
                 ]
             );
         } catch(PDOException $e) {
-            die("Erro de Conexão: " . $e->getMessage());
+            die("Erro de Conex達o: " . $e->getMessage());
         }
         return $this->conn;
     }
