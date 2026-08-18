@@ -10,7 +10,7 @@ class HomeController extends Controller {
         
         // Proteção total: Redireciona obrigatoriamente para a tela de login se não houver sessão ativa
         if (!isset($_SESSION['usuario_admin'])) {
-            header('Location: /login');
+            header('Location: dash-trabalheconosco/login');
             exit();
         }
     }

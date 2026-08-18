@@ -34,7 +34,7 @@ class LoginController extends Controller {
         }
 
         $_SESSION['erro_login'] = 'Credenciais inválidas ou permissão negada.';
-        header('Location: /login');
+        header('Location: dash-trabalheconosco/login');
         exit();
     }
 
@@ -42,7 +42,7 @@ class LoginController extends Controller {
         if (session_status() === PHP_SESSION_NONE) session_start();
         unset($_SESSION['usuario_admin']);
         session_destroy();
-        header('Location: /login');
+        header('Location: dash-trabalheconosco/login');
         exit();
     }
 }
