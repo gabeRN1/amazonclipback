@@ -22,7 +22,7 @@ class App {
 
         // Se o usuário NÃO estiver logado e tentar acessar uma rota privada, manda para o Login
         if (!isset($_SESSION['usuario_logado']) && !in_array($requestedController, $rotasPublicas)) {
-            header('Location: dash-trabalheconosco/login');
+            header('Location: ' . BASE_URL . '/login');
             exit();
         }
 

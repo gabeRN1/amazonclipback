@@ -6,7 +6,7 @@ class LoginController extends Controller {
     public function index() {
         if (session_status() === PHP_SESSION_NONE) session_start();
         if (isset($_SESSION['usuario_admin'])) {
-            header('Location: /');
+            header('Location: ' . BASE_URL . '/');
             exit();
         }
         $this->view('login');
@@ -28,13 +28,13 @@ class LoginController extends Controller {
                     'nome' => $user['nome'],
                     'email' => $user['email']
                 ];
-                header('Location: /');
+                header('Location: ' . BASE_URL . '/');
                 exit();
             }
         }
 
         $_SESSION['erro_login'] = 'Credenciais inválidas ou permissão negada.';
-        header('Location: dash-trabalheconosco/login');
+        header('Location: ' . BASE_URL . '/login');
         exit();
     }
 
@@ -42,7 +42,7 @@ class LoginController extends Controller {
         if (session_status() === PHP_SESSION_NONE) session_start();
         unset($_SESSION['usuario_admin']);
         session_destroy();
-        header('Location: dash-trabalheconosco/login');
+        header('Location: ' . BASE_URL . '/login');
         exit();
     }
 }
